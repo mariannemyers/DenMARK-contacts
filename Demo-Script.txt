@@ -1,0 +1,54 @@
+Demo Script - Just the commands
+
+./ml local bootstrap
+./ml local deploy modules
+./ml local deploy content
+cat import-sample-data.options
+./ml local mlcp -options_file import-sample-data.options
+cat import-sample-data.options
+./ml local mlcp -options_file import-rdf.options
+(other terminal window)
+gulp serve-local
+
+
+In Webapp
+* Explain Landing Page
+* Go to the Search Application
+* Load a single record
+* Explain the page, highlight the Roles are empty
+
+/v1/graphs/things
+* I use this a lot to explore the data
+* Explain author predicate as a sentence
+* Pick on Achim, more sentences
+* 21 things about him
+
+
+In Query Console
+* Explore the data
+* Show the first JSON document
+* Remind about the guid - this is could be unique across multiple datasources
+* Link the data tab, explain the steps
+
+/v1/graphs/things
+* Reload Achim, now have 22
+* Copy his guid to the buffer
+
+In Query Console (if time)
+* Now build a SPARQL Query
+* Add ?name
+        ?s rdfs:label ?name .
+* Add ?role, that's not what I wanted, get the label
+        ?s swc:holdsRole ?role .
+* Add ?roleName
+        ?role rdfs:label ?roleName
+
+In Sublime Text
+* Show we created a REST Endpoint with this query
+* Using SPARQL + XQuery together
+
+In the Webapp
+* Reload the page, he has Roles now
+* We're now showing two separate types of data, two sources together
+* Go back to search for the Guid
+* Locate Achim - Ester.  See his two roles.
