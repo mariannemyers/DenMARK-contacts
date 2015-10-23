@@ -1,0 +1,84 @@
+<export><workspace name="Workspace"><query name="Get persons and roles" focus="false" active="true" content-source="as:665024280328570028:" mode="sparql">PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX swc: &lt;http://data.semanticweb.org/ns/swc/ontology#&gt;
+
+# Let's explore the dataset, get the person's name and their role(s)
+
+select ?s ?name ?roleName
+where 
+  {
+    ?s a foaf:Person .
+    ?s rdfs:label ?name .
+    ?s swc:holdsRole ?role .
+    ?role rdfs:label ?roleName
+  }</query><query name="Link the data" focus="true" active="true" content-source="as:665024280328570028:" mode="xquery">import module namespace sem = "http://marklogic.com/semantics" at "/MarkLogic/semantics.xqy";
+
+let $guids := 
+  for $doc in fn:collection("data/people")
+  return $doc/guid
+
+let $persons :=
+  sem:sparql("
+    PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+    
+    SELECT ?s
+    WHERE 
+      {
+        ?s a foaf:Person 
+      }
+  ")
+  
+let $graph-name := sem:iri("eswc-2015")
+return
+  for $person at $count in $persons
+  let $person-iri := map:get($person, "s")
+  let $triple := sem:triple(sem:iri($guids[$count]), sem:iri("http://www.w3.org/2004/02/skos/core#related"), $person-iri) 
+  return sem:graph-insert($graph-name, $triple) </query><query name="Coauthors for a person" focus="false" active="true" content-source="as:665024280328570028:" mode="xquery">    import module namespace sem = "http://marklogic.com/semantics" 
+      at "/MarkLogic/semantics.xqy";
+
+    let $person := "7685c837-78d9-496a-9d22-373a0a21bd43"
+    let $query-params :=
+      map:new(map:entry("subject",
+        sem:iri($person)))
+
+    let $result :=
+      sem:sparql("
+        PREFIX foaf:  &lt;http://xmlns.com/foaf/0.1/&gt;
+        PREFIX dc: &lt;http://purl.org/dc/elements/1.1/&gt;
+        PREFIX swc: &lt;http://data.semanticweb.org/ns/swc/ontology#&gt;
+        PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+
+        SELECT ?pub ?title ?coauthor ?coauthorname ?proceedings
+        WHERE { ?subject skos:related ?person .
+                ?person foaf:made ?pub .
+                ?pub foaf:maker ?coauthor .
+                ?coauthor foaf:name ?coauthorname .
+                ?pub dc:title ?title .
+                ?pub swc:isPartOf ?proceedings .
+                FILTER ( ?person != ?coauthor) .
+              } order by asc(?pub)
+      ", $query-params)
+      
+      
+      return document { xdmp:to-json($result) }</query><query name="Name + homepage" focus="false" active="true" content-source="as:665024280328570028:" mode="xquery">    let $person := "7685c837-78d9-496a-9d22-373a0a21bd43"
+    let $query-params :=
+      map:new(map:entry("subject",
+        sem:iri($person)))
+
+    let $result :=
+      sem:sparql("
+        PREFIX foaf:  &lt;http://xmlns.com/foaf/0.1/&gt;
+        PREFIX dc: &lt;http://purl.org/dc/elements/1.1/&gt;
+        PREFIX swc: &lt;http://data.semanticweb.org/ns/swc/ontology#&gt;
+        PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+
+        SELECT ?name ?homepage
+        WHERE { 
+                ?person foaf:name ?name .
+                { OPTIONAL { ?person foaf:homepage ?homepage } } 
+      }
+      ", $query-params)
+    return document { xdmp:to-json($result) }</query><query name="Get one doc" focus="false" active="true" content-source="as:665024280328570028:" mode="javascript">var doc = cts.doc("data-438.json")
+var name = doc.toObject()
+name
+</query><query name="Examine a triple inserted" focus="false" active="true" content-source="as:665024280328570028:" mode="xquery">fn:doc("/triplestore/71ca3603affe208c.xml")</query></workspace></export>
