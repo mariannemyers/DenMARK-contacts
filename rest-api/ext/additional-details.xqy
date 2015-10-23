@@ -15,8 +15,22 @@ $params  as map:map
       map:new(map:entry("subject",
         sem:iri($guid)))
 
-    let $result := ()
+    let $result :=
+      sem:sparql("
+        PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
+        PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX swc:   <http://data.semanticweb.org/ns/swc/ontology#>
+        PREFIX skos:  <http://www.w3.org/2004/02/skos/core#>
 
+        SELECT ?roleName
+        WHERE
+          {
+            ?subject  skos:related  ?person .
+            ?person   rdfs:label    ?name .
+            ?person   swc:holdsRole ?role .
+            ?role     rdfs:label    ?roleName
+          }
+      ", $query-params)
 
     (: We may only get one result, but we'd like to make sure it always is returned as an array :)
     let $as-array := json:to-array($result)
