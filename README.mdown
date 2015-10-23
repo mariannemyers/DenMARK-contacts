@@ -97,7 +97,8 @@ that relates a doc's GUID property to the IRI for a person.  This work is done v
 # Recreate the demo with a demo script
 
 Demo-Script.txt includes the steps @mariannemyers ran through live in person.  Feel free to use these
-steps to recreate the demo yourself.
+steps to recreate the demo yourself.  If you'd like to work from her starting point, checkout branch
+'empty'.
 
 # Disclaimer - Dummy Data
 
