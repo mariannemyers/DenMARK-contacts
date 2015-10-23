@@ -43,6 +43,7 @@ In Query Console (if time)
 * Add ?roleName
         ?role rdfs:label ?roleName
 * Copy the contents of this SPARQL query built into the shell created in additional-details.xqy
+** See commit a6837dea544921c8a0547223e8f2f7b974f71f82 on master if you need help.
 
 In Sublime Text
 * Show we created a REST Endpoint with this query
